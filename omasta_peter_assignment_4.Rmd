@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ### INTRODUCTION ###
 
-This is my 4th assignment, where I will be creating a cohesive, well-written, and professionally presented mini-report describing spiny lobster size and abundance for lobsters observed at 5 locations along the Santa Barbara coastline by the SBC LTER.
+Inside of this report, data collected from the Santa Barbara Channel Long Term Ecological Restoration Network (to be referred to as SBC LTER henceforth) is being used to look at how lobster populations have faired since the implementation of marine protected areas. The California Spiny Lobster (*Panulirus interruptus*) is considered one of the most important valuable aquatic species from an economic perspective, with an average annual price of $11.07 per pound, and earning over $3.3 million in earnings for the port of Santa Barbara in 2013. [Citation 1] Over harvesting of lobsters poses a threat to the stability of the ecosystem as well as the socioeconomic systems that have been created around the harvest of lobsters in Santa Barbara. 
 
 ```{r, include=FALSE}
 library(tidyverse)
@@ -62,7 +62,8 @@ ggplot(data = count_datula, aes(x=year, y=n)) +
   ) +
   scale_x_continuous(lim=c(2012,2019), expand = c(0,0)) +
   scale_y_continuous(lim=c(0,1000), expand = c(0,0)) +
-  theme_minimal()
+  theme_minimal() 
+ 
 
 
 
@@ -77,7 +78,10 @@ size_data <- lob_data %>%
   summarize(
     average = mean(size_mm, na.rm = TRUE),
     sd = sd(size_mm, na.rm = TRUE)
-  )
+  ) 
+  
+  
+
 
 ```
 
@@ -201,14 +205,14 @@ nonmpa_ttest
 
 datatable(mpa_df_avg)
 
-
-
 ```
 
 
 ### 4) Summary
 
+Marine Proected Areas like the Isla Vista (IVEE) and Naples (NAPL) sites saw an increase in the number of lobsters from 2012 to 2018 (figure 1) as well a increase in the mean size (~12mm) of lobsters (figures 3,4) in the same period of time. This result was statistically significant, and it may imply that protecting the areas allowed for populations to mature and reproduce which resulted in greater numbers and lobster size. On the other hand, non-Marine Protected Sites saw either static (Carp) and (Aque) or a decrease (MOHK) in the number of lobsters found from 2012 to 2018 (figure 2) There was no statistically significant change in average size between the two samples during the same time period. 
 
+While designating an area as a Marine Protected Area seems to have a demonstrably positive effect on lobster populations and size. Keeping an area as a non-Marine Protected Area does not have any statistically negative effects on the populations, but decreases in mean population size, and the overall number of individuals may signal an early trend to system managers about over harvesting of lobsters.  
 
 
 
