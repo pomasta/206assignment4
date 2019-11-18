@@ -14,7 +14,11 @@ knitr::opts_chunk$set(echo = FALSE)
 
 Inside of this report, data collected from the Santa Barbara Channel Long Term Ecological Restoration Network (to be referred to as SBC LTER henceforth) is analyzed to look at how lobster populations have faired since the implementation of marine protected areas. [1] The California Spiny Lobster (*Panulirus interruptus*) is considered one of the most important and aquatic species from an economic perspective, with an average annual price of $ 11.07 per pound, and earning over $3.3 million in earnings for the port of Santa Barbara in 2013. [3] Over harvesting of lobsters poses a threat to the stability of the ecosystem as well as the socioeconomic systems that have been created around the harvest of lobsters in Santa Barbara. [2] Marine Protected Areas prohibit the harvesting of lobsters within the boundary, and are associated with a resulting increase in the mean size and population density of losbters. [4] Research has also been performed that examines the importantance of spillover from marine protected areas into adjacent non-protected areas. It is theorized that spillover from protected areas which have larger populations may help to buoy the populations in non-protected areas by having adult lobsters move from the densely populated protected-habitats to less dense habitats in search of food.[2] This study will look at how the designation of two sites in the Santa Barbara Channel (Isla Vista and Naples) as marine protected areas influenced the average size and population of the California Spiny Lobster from 2012 to 2018. 
 
+![Source: Getty Images.](lobpic.jpg)
+
 ```{r, include=FALSE}
+
+#Attach the necessary packages
 library(tidyverse)
 library(janitor)
 library(tidyr)
@@ -24,8 +28,8 @@ library(kableExtra)
 ```
 
 ```{r, include = FALSE}
-#We will start by importing the necessary .csv file 
 
+#We will start by importing the necessary .csv file 
 lob_data <- read_csv("lobster_abundance_sbc_lter.csv", na = "-99999") %>% 
   janitor::clean_names() %>% 
   uncount(count) 
@@ -38,10 +42,11 @@ Data was collected from the SBC LTER from 2012 - 2018, as part of an on going st
 
 ### RESULTS ### 
 
-#### A) Annual Lobster Abundance
-Populations of Calironia Spiny Lobster increased across all sites from 2012 until 2018 (Figure 1). The Marine Protected Area sites of Isla Vista (2012 = 26, 2018 = 946) and Naples (2012 = 6, 2018 = 298) saw significant increases in sampling counts. Carpenteria (2012 = 78, 2018 = 343) and Mohawk (2012 = 83, 2018 = 164) also saw subsatianial increases in population count while Arroyo Quemado (2012 = 38, 2018 = 54) only saw a modest increase in count data. 
+#### **A) Annual Lobster Abundance**
+Populations of Calironia Spiny Lobster increased across all sites from 2012 until 2018 **(Figure 1)**. The Marine Protected Area sites of Isla Vista (2012 = 26, 2018 = 946) and Naples (2012 = 6, 2018 = 298) saw significant increases in sampling counts. Carpenteria (2012 = 78, 2018 = 343) and Mohawk (2012 = 83, 2018 = 164) also saw subsatianial increases in population count while Arroyo Quemado (2012 = 38, 2018 = 54) only saw a modest increase in count data. 
 
 ```{r, include = FALSE}
+#create data frame for the first graph
 count_datula <- lob_data %>% 
   group_by(year, site) %>% 
   count(site) 
@@ -49,18 +54,23 @@ count_datula <- lob_data %>%
 ```
 
 ```{r}
+
+#code for first graph
 ggplot(data = count_datula, aes(x=year, y=n)) +
-  geom_line(aes(color = site),
+  geom_line(aes(color = site), #aes for identifying each individual line
             size = 1.3,
             alpha=0.7)+
   labs(x = "Year",
        y = "Annual Count",
        color = "LTER Site",
-       caption = "From SBC LTER Data, shows change in lobster size from 2012-2018") +
+       caption = "Figure 1. In 2012 the range of values was 6 - 38 for counts across all sites, in 2018 the range was 54- 946. 
+       Every site saw an increase in count, with Isla Vista (IVEE) being the largest, followed by Carpenteria (CARP)
+       and Naples (NAPL). The Mohawk and Arroyo Quemado sites both increased, but not as much as the others.") +
   ggtitle(label="Figure 1",
           subtitle = "Lobster Count from LTER Sites in Santa Barbara Channel")+
   theme(plot.title = element_text(hjust = 0.5,color = "gray2", size= 14),
         plot.subtitle = element_text(hjust = 0.5,color = "gray8", size= 8),
+        plot.caption = element_text(hjust = 0)
   ) +
   scale_x_continuous(lim=c(2012,2018), expand = c(0,0)) +
   scale_y_continuous(lim=c(0,1000), expand = c(0,0)) +
@@ -68,7 +78,7 @@ ggplot(data = count_datula, aes(x=year, y=n)) +
   geom_text(aes(x= 2015,y= 720,
                 label="NAPL & IVEE = MPA Sites"),
             colour="gray10",
-            size=3.8, alpha=0.6)
+            size=3.8, alpha=0.6) 
                     
 
 
@@ -76,6 +86,8 @@ ggplot(data = count_datula, aes(x=year, y=n)) +
 
 
 ```{r}
+
+#data frame for the second graph
 size_data <- lob_data %>% 
   select(year,site,size_mm) %>% 
   filter(year == c("2012","2018")) %>% 
@@ -85,6 +97,7 @@ size_data <- lob_data %>%
     sd = sd(size_mm, na.rm = TRUE)
   ) 
 
+#Below are the calculations of the individual summary statistics
 ivee12_df <- lob_data %>% 
   filter(year == "2012") %>% 
   filter(site == "IVEE") 
@@ -157,11 +170,12 @@ aque182n <- sum(!is.na(aque18_df$size_mm))
 
 ```
 
-#### B) Lobster Size Changes 
+#### **B) Lobster Size Changes**
 
-While count data increased across all sites from 2012 - 2018, there was actually a difference in the mean size of lobsters. The mean size for the two MPA sites Naples (2012 = (`r round(napl12mean, 2)` $\pm$ `r round(napl12sd, 2)`, n = `r napl12n`) 2018 = `r round(napl18mean, 2)` $\pm$ `r round(napl18sd, 2)`, n = `r napl18n`)) and Isla Vista (2012 = (`r round(ivee12mean, 2)` $\pm$ `r round(ivee12sd, 2)`, n = `r ivee12n`) 2018 = `r round(ivee18mean, 2)` $\pm$ `r round(ivee18sd, 2)`, n = `r ivee18n`)) saw overall increases from 2012 to 2018. Over the same time period the Carpenteria (2012 = (`r round(carp12mean, 2)` $\pm$ `r round(carp12sd, 2)`, n = `r carp12n`) 2018 = `r round(carp18mean, 2)` $\pm$ `r round(carp18sd, 2)`, n = `r carp18n`) and Mohawk (2012 = (`r round(mohk12mean, 2)` $\pm$ `r round(mohk12sd, 2)`, n = `r mohk12n`) 2018 = `r round(mohk18mean, 2)` $\pm$ `r round(mohk18sd, 2)`, n = `r mohk18n`) sites saw decreases in the overall lobster size.
+While count data increased across all sites from 2012 - 2018, there was actually a difference in how the mean size of lobsters responded based on their habitat being designated as a marine protected area or not. **(Figure 2)** The mean size for the two MPA sites Naples (2012 = (`r round(napl12mean, 2)` $\pm$ `r round(napl12sd, 2)`, n = `r napl12n`) 2018 = `r round(napl18mean, 2)` $\pm$ `r round(napl18sd, 2)`, n = `r napl18n`)) and Isla Vista (2012 = (`r round(ivee12mean, 2)` $\pm$ `r round(ivee12sd, 2)`, n = `r ivee12n`) 2018 = `r round(ivee18mean, 2)` $\pm$ `r round(ivee18sd, 2)`, n = `r ivee18n`)) saw overall increases from 2012 to 2018. Over the same time period the Carpenteria (2012 = (`r round(carp12mean, 2)` $\pm$ `r round(carp12sd, 2)`, n = `r carp12n`) 2018 = `r round(carp18mean, 2)` $\pm$ `r round(carp18sd, 2)`, n = `r carp18n`) and Mohawk (2012 = (`r round(mohk12mean, 2)` $\pm$ `r round(mohk12sd, 2)`, n = `r mohk12n`) 2018 = `r round(mohk18mean, 2)` $\pm$ `r round(mohk18sd, 2)`, n = `r mohk18n`) sites saw decreases in the overall lobster size. 
 ```{r}
 
+#code for the second graph showing mean differences by site
 ggplot(size_data, aes(x = year, y = average)) +
   geom_point(aes(color=site),
              shape=15,
@@ -170,7 +184,9 @@ ggplot(size_data, aes(x = year, y = average)) +
   labs(x = "Year",
        y = "Average Size (mm)",
        color = "LTER Site",
-       caption = "From SBC LTER Data, shows change in lobster size from 2012-2018") +
+       caption = "Figure 2. The figure depicts the change in mean size for lobsters from each site within the SBC LTER for 
+       2012 and 2018. The two MPA sites, NAPL and IVEE saw an average increase of 11. 18mm & 12.9mm 
+       respectively. While the non-MPA sites MOHK and CARP saw an average decrease of ~1mm and ~6mm.  ") +
   ggtitle(label="Figure 2",
           subtitle = "Lobster Size Change by Site, 2012-2018")+
   theme(plot.title = element_text(hjust = 0.5,color = "gray2", size= 14),
@@ -183,25 +199,23 @@ ggplot(size_data, aes(x = year, y = average)) +
                 label="NAPL & IVEE = MPA Sites"),
             colour="gray10",
             size=3.8, alpha=0.6)
-
-
 ```
 
 
 
 ```{r, include = FALSE}
-#First need to join the Naples (NAPL) and Isla Vista (IVEE) columns are MPAs. 
 
+#First need to join the Naples (NAPL) and Isla Vista (IVEE) columns are MPAs. 
+#This creates a new factor variable (mpa_status)
 mpa_df <- lob_data %>% 
   mutate(recode_factor(site, IVEE = "MPA", NAPL = "MPA", 
                        CARP = "non-MPA", MOHK= "non-MPA",
                        AQUE = "non-MPA")
   )
 
-#Data frame adding in mpa_status
+#cleaning up the data frame to have mpa_status as a column name
 mpa_clean <- mpa_df %>% 
   rename(mpa_status = `recode_factor(...)`) %>% 
-  select(mpa_status, site, year, size_mm) %>% 
   mutate(year = as.factor(year),
          mpa_status = as.character(mpa_status)
   )
@@ -212,7 +226,7 @@ mpa_df_avg <- mpa_clean %>%
   summarize(
     average = mean(size_mm, na.rm = TRUE),
     sd = sd(size_mm, na.rm = TRUE),
-    n = n()
+    n = (n() * 2)
   ) 
 
 mpa_nonavg <- mpa_clean %>% 
@@ -221,9 +235,8 @@ mpa_nonavg <- mpa_clean %>%
   group_by(year, mpa_status)
 ```
 
-#### MPA
-```{r stats, include= FALSE}
-#this section is to run all of the necessary ttests 
+```{r, include= FALSE}
+#creating data frames for ttests 
 mpa_sample12 <- mpa_clean %>% 
   filter(mpa_status == "MPA",
          year == "2012") %>% 
@@ -244,22 +257,29 @@ nonmpa_sample18 <- mpa_clean %>%
          year == "2018") %>% 
   pull(size_mm)
   
+#running the actual tests
 mpa_ttest18 <- t.test(mpa_sample18, nonmpa_sample18)
 mpa_ttest12 <- t.test(mpa_sample12, nonmpa_sample12)
 mpa_ttest <- t.test(mpa_sample18, mpa_sample12)
 nonmpa_ttest <- t.test(nonmpa_sample12, nonmpa_sample18)
 ```
 
+#### **C) MPA vs. Non-MPA Results**
 
-In 2012 the mean area size for MPA sites was 65.69 mm while the non-MPA sites had a mean of 75.87 mm. In the six years after implementation of the MPA status the MPA sites saw a statistically significant increase in 2018 mean body size to 77.79 mm t(`r round(mpa_ttest$parameter, 2`))
+In 2012 the mean area size for MPA sites was 65.69mm while the non-MPA sites had a mean of 75.87mm, a difference of 10.18mm or 15.5% **(Figure 3)** that was statistically significant (two-sided t-test, (t(`r mpa_ttest12$parameter`) = `r mpa_ttest12$statistic`, *p* = `r mpa_ttest12$p.value`))) . In the six years after implementation of the MPA status the MPA sites saw a statistically significant increase of 18.42% of mean body size to 77.79 mm in 2018  **(Figure 3)**(two-sided t-test, (t(`r mpa_ttest$parameter`) = `r mpa_ttest$statistic`, *p* = `r mpa_ttest$p.value`)). In 2018 there was also a difference in the value of the MPA (77.79mm) and non-MPA sites(73.91mm) that was significant (two-sided t-test, (t(`r mpa_ttest18$parameter`) = `r mpa_ttest18$statistic`) *p* = `r mpa_ttest18$p.value`). 
+
 
 ```{r}
+
+#code for the third graph 
 ggplot(mpa_df_avg, aes(x=year, y=average)) +
   geom_col(aes(fill=mpa_status),
            position="dodge2") +
   labs(x = "Year",
        y = "Average Size (mm)",
-       caption = "From SBC LTER Data, shows change in lobster size from 2012-2018") +
+       caption = "Figure 3. The bars show the means of MPA designation by year. In 2012 the mean was 65.69mm while the
+       mean size of non-mpa sites was 75.87mm. In 2018 the mean for MPA sites was 77.79mm while the mean 
+       for non-MPA sites was 73.91mm.") +
   ggtitle(label="Figure 3",
           subtitle = "Size Changes from 2012-2018 based on MPA Status")+
   theme(plot.title = element_text(hjust = 0.5,color = "gray2", size= 14),
@@ -269,16 +289,19 @@ ggplot(mpa_df_avg, aes(x=year, y=average)) +
   scale_fill_manual(values = c("darkolivegreen","dodgerblue4"),
                     name = "MPA Status",
                     label = c("MPA", "non-MPA")) +
-  guides(color = FALSE) 
+  guides(color = FALSE)  #turns off default legend based on color 
+
 ```
 
 
 
-
+#### Figure 4
 ```{r}
 
+#code for table
 datatable(head(mpa_df_avg), colnames = c('Year','MPA Status','Mean (mm)', 'Standard Deviation', 'N'),
-          caption = "From SBC LTER Data, shows change in lobster size from 2012-2018",
+          caption = "This table shows the average size of lobsters and the standard deviation of lobsters from different
+          years and designations of Marine Protected Statuses. It also shows the number of samples taken with that year.",
           options = list(pageLength = 5, dom = 'tip'), 
           rownames = FALSE)
 
@@ -287,7 +310,7 @@ datatable(head(mpa_df_avg), colnames = c('Year','MPA Status','Mean (mm)', 'Stand
 
 ### Summary
 
-Marine Proected Areas like the Isla Vista (IVEE) and Naples (NAPL) sites saw an increase in the number of lobsters from 2012 to 2018 (figure 1) as well a increase in the mean size (~12mm) of lobsters (figures 3,4) in the same period of time. This result was statistically significant, and it may imply that protecting the areas allowed for populations to mature and reproduce which resulted in greater numbers and lobster size. On the other hand, non-Marine Protected Sites saw either static (Carp) and (Aque) or a decrease (MOHK) in the number of lobsters found from 2012 to 2018 (figure 2) There was no statistically significant change in average size between the two samples during the same time period. 
+Marine Proected Areas like the Isla Vista (IVEE) and Naples (NAPL) sites saw an increase in the number of lobsters from 2012 to 2018 (Figure 1) as well a increase in the mean size (~12mm) of lobsters (Figures 3,4) in the same period of time. This result was statistically significant, and it may imply that protecting the areas allowed for populations to mature and reproduce which resulted in greater numbers and lobster size. On the other hand, non-Marine Protected Sites saw either static (CARP) and (AQUE) or a decrease (MOHK) in the number of lobsters found from 2012 to 2018 (Figure 2) There was no statistically significant change in average size between the two samples during the same time period. 
 
 Designating an area as a Marine Protected Area seems to have a demonstrably positive effect on lobster populations and size. This increase in mean size and overall population may have also resulted in a spillover to the other non-marine protected areas which is why they did not have as much of a decrease in population size and mean body size as might be expected with harvesting activites.Keeping an area as a non-Marine Protected Area does not have any statistically negative effects on the populations, but decreases in mean population size, and the overall number of individuals may signal an early trend to system managers about over harvesting of lobsters and the need to rotate the Marine Protected Area designation to further conserve lobsters for ecosystem and socioeconomic purposes. 
 
